@@ -5,9 +5,9 @@ using System.Web;
 
 namespace JqueryAjaxCrud.Models
 {
-    public class ClsCountry
+    public class select2PageResult
     {
-        public int CountryId { get; set; }
-        public string CountryName { get; set; }
+        public int Total { get; set; }
+        public List<clsList> Results { get; set; }
     }
 }

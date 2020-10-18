@@ -10,10 +10,10 @@ using System.Web.Mvc;
 
 namespace JqueryAjaxCrud.Controllers
 {
-    public class HomeController : Controller
+    public class CountryController : Controller
     {
         TestDbEntities1 db;
-        public HomeController()
+        public CountryController()
         {
             db = new TestDbEntities1();
         }
@@ -22,49 +22,38 @@ namespace JqueryAjaxCrud.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            List<ClsCity> listcity = new List<ClsCity>();
-            listcity = (from c in db.tblCities
-                        join cc in db.tblCountries on c.CountryId equals cc.CountryId
-                        select new ClsCity
-                        {
-                            CityId = c.CityId,
-                            CityName = c.CityName,
-                            CountryId = c.CountryId,
-                            CountryName = cc.CountryName
-                        }).ToList();
-            return View(listcity);
+            var countries = (from row in db.tblCountries select row).ToList();
+            return View(countries);
         }
         [HttpGet]
         public ActionResult AddUpdateCity(int id = 0)
         {
-            ClsCity city = new ClsCity();
+            ClsCountry cntry = new ClsCountry();
             if (id > 0)
             {
-                city = (from c in db.tblCities
-                        where c.CityId == id
-                        select new ClsCity
+                cntry = (from c in db.tblCountries
+                        where c.CountryId == id
+                        select new ClsCountry
                         {
-                            CityId = c.CityId,
-                            CityName = c.CityName,
-                            CountryId = c.CountryId
+                            CountryId = c.CountryId,
+                            CountryName = c.CountryName
                         }).FirstOrDefault();
 
             }
             else
             {
-                city = new ClsCity
+                cntry = new ClsCountry
                 {
-                    CityId = 0,
-                    CityName = "",
-                    CountryId = 0
+                    CountryId = 0,
+                    CountryName = "",
                 };
             }
-            ViewBag.Countries = new SelectList(db.tblCountries.OrderBy(x => x.CountryName).ToList(), "CountryId", "CountryName", city.CountryId);
+            //ViewBag.Countries = new SelectList(db.tblCountries.OrderBy(x => x.CountryName).ToList(), "CountryId", "CountryName", city.CountryId);
 
-            return PartialView(city);
+            return PartialView(cntry);
         }
         [HttpPost]
-        public ActionResult AddUpdateCity(ClsCity ccity)
+        public ActionResult AddUpdateCity(ClsCountry cntry)
         {
             string message = "";
             bool status = false;
@@ -72,7 +61,7 @@ namespace JqueryAjaxCrud.Controllers
             {
                 string returnId = "0";
                 string insertUpdateStatus = "";
-                if (ccity.CityId > 0)
+                if (cntry.CountryId > 0)
                 {
                     insertUpdateStatus = "Update";
 
@@ -82,7 +71,7 @@ namespace JqueryAjaxCrud.Controllers
                     insertUpdateStatus = "Save";
 
                 }
-                returnId = InsertUpdateCityDb(ccity, insertUpdateStatus);
+                returnId = InsertUpdateCountryDb(cntry, insertUpdateStatus);
                 if (returnId == "Success")
                 {
                     status = true;
@@ -133,7 +122,7 @@ namespace JqueryAjaxCrud.Controllers
             //return new JsonResult { Data = new { status = status, message = message } };
         }
 
-        private string InsertUpdateCityDb(ClsCity st, string insertUpdateStatus)
+        private string InsertUpdateCountryDb(ClsCountry st, string insertUpdateStatus)
         {
             string returnId = "0";
             string connection = System.Configuration.ConfigurationManager.ConnectionStrings["ADO"].ConnectionString;
@@ -142,13 +131,12 @@ namespace JqueryAjaxCrud.Controllers
                 try
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("spInsertUpdateCity", con))
+                    using (SqlCommand cmd = new SqlCommand("spInsertUpdateCountry", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Clear();
-                        cmd.Parameters.Add("@CityId", SqlDbType.Int).Value = st.CityId;
-                        cmd.Parameters.Add("@CityName", SqlDbType.NVarChar).Value = st.CityName;
                         cmd.Parameters.Add("@CountryId", SqlDbType.Int).Value = st.CountryId;
+                        cmd.Parameters.Add("@CountryName", SqlDbType.NVarChar).Value = st.CountryName;
                         cmd.Parameters.Add("@InsertUpdateStatus", SqlDbType.NVarChar).Value = insertUpdateStatus;
                         cmd.Parameters.Add("@CheckReturn", SqlDbType.NVarChar, 300).Direction = ParameterDirection.Output;
                         cmd.ExecuteNonQuery();
@@ -166,14 +154,14 @@ namespace JqueryAjaxCrud.Controllers
             return returnId;
         }
         [HttpPost]
-        public ActionResult DeleteCity(int id)
+        public ActionResult DeleteCountry(int id)
         {
             string message = "";
             bool status = false;
 
-            ClsCity st = new ClsCity();
-            st.CityId = id;
-            string returnId = InsertUpdateCityDb(st, "Delete");
+            ClsCountry st = new ClsCountry();
+            st.CountryId = id;
+            string returnId = InsertUpdateCountryDb(st, "Delete");
             if (returnId == "Success")
             {
                 ModelState.Clear();

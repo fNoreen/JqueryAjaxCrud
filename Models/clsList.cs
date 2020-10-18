@@ -5,9 +5,10 @@ using System.Web;
 
 namespace JqueryAjaxCrud.Models
 {
-    public class ClsCountry
+    public class clsList
     {
-        public int CountryId { get; set; }
-        public string CountryName { get; set; }
+        public int id { get; set; }
+        public string text { get; set; }
+
     }
 }

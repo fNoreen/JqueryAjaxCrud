@@ -13,10 +13,10 @@ namespace JqueryAjaxCrud.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class TestDbEntities : DbContext
+    public partial class TestDbEntities1 : DbContext
     {
-        public TestDbEntities()
-            : base("name=TestDbEntities")
+        public TestDbEntities1()
+            : base("name=TestDbEntities1")
         {
         }
     
@@ -26,6 +26,9 @@ namespace JqueryAjaxCrud.Models
         }
     
         public virtual DbSet<tblCity> tblCities { get; set; }
+        public virtual DbSet<tblCompany> tblCompanies { get; set; }
         public virtual DbSet<tblCountry> tblCountries { get; set; }
+        public virtual DbSet<tblPurchase> tblPurchases { get; set; }
+        public virtual DbSet<tblPurchaseLine> tblPurchaseLines { get; set; }
     }
 }
